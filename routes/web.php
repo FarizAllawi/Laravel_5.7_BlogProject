@@ -19,3 +19,7 @@ Route::get('/new', 'TestController@controllerMethod');
 Route::any('{slug}', function(){
     return view('welcome');
 });
+
+
+Route::post('app/createTag','AdminController@addTag');
+Route::post('app/getTags','AdminController@getTags');

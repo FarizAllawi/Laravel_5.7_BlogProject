@@ -8,8 +8,11 @@ import ViewUI from 'view-design';
 import 'view-design/dist/styles/iview.css';
 
 Vue.use(ViewUI);
-Vue.component('main_app', require('./components/main_app.vue').default);
 
+import common from './common';
+Vue.mixin(common);
+
+Vue.component('main_app', require('./components/main_app.vue').default);
 
 const app = new Vue({
     el: '#app',
