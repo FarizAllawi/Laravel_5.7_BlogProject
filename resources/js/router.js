@@ -3,7 +3,7 @@ import Router from 'vue-router'
 
 // Project Pages
 import homePage from './components/pages/home'
-import tags from './components/pages/tags'
+import tags from './admin/pages/tags'
 
 Vue.use(Router)
 

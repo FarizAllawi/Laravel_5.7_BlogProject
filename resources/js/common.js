@@ -30,7 +30,7 @@ export default {
         },
         s (desc , title="Great!") {
             this.$Notice.success({
-                ttitle: title,
+                title: title,
                 desc: desc
             });  
         },

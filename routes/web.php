@@ -21,5 +21,10 @@ Route::any('{slug}', function(){
 });
 
 
-Route::post('app/createTag','AdminController@addTag');
 Route::post('app/getTags','AdminController@getTags');
+Route::post('app/createTag','AdminController@addTag');
+Route::post('app/editTag','AdminController@editTag');
+Route::post('app/deleteTag','AdminController@deleteTag');
+
+
+
