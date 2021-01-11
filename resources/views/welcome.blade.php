@@ -7,7 +7,13 @@
         <title>F-BLOG</title>
         
         <link rel="stylesheet" href="/css/all.css">
-
+        <script>
+            (function () {
+                window.Laravel = {
+                    csrf_token : '{{ csrf_token() }}',
+                };
+            })();
+        </script>
     </head>
     <body> 
         <div id="app">

@@ -118,7 +118,7 @@ export default {
 	methods : {
 		async addTag() {
 			// if (this.data.tagName.trim() == '') return this.e('Tag name is required');
-			const res = await this.callApi('post', 'app/createTag' , this.data);
+			const res = await this.callApi('post', 'app/addTag' , this.data);
 
 			if (res.status === 201) {
 				this.tags.unshift(res.data);
