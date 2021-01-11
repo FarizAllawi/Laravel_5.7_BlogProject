@@ -5,6 +5,7 @@ import Router from 'vue-router'
 import homePage from './components/pages/home'
 import tags from './admin/pages/tags'
 import category from './admin/pages/category'
+import usecom from './vuex/usecom'
 
 
 Vue.use(Router)
@@ -14,6 +15,10 @@ const routes = [
     { path : '/', component : homePage },
     { path : '/tags', component : tags},
     { path : '/category', component : category},
+
+    // Learn Vuex
+    { path : '/test-vuex', component : usecom},
+    
 ]
 
 export default new Router({
