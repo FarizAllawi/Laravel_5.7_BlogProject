@@ -98,4 +98,18 @@ class AdminController extends Controller
             'iconImage'    => $request->iconImage
         ]);
     }
+
+    public function deleteCategory(Request $request) {
+        $this->validate($request , [
+            'id' => 'required',
+            'iconImage' => 'required'
+        ]);
+        $deleteCategory = Category::where('id' , $request->id)->delete();
+        if ($deleteCategory){
+            $this->deleteFileFromServer($request->iconImage);
+            return 'done';
+        } 
+        else return 0;
+    
+    }
 }

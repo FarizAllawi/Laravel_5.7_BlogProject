@@ -34,7 +34,7 @@ import {mapGetters} from 'vuex'
 export default {
     data() {
         return {
-
+            localVar : ''
         }
     },
 
@@ -53,12 +53,24 @@ export default {
             this.$store.dispatch('changeCounterAction' , 1)
             this.$store.commit('changeTheCounter', 1)
         },
+        runSomethingWhenCounterChange() {
+            console.log('I am running based on each changes happening')
+        }
     },
 
     components : {
         comA,
         comB,
         comC
+    },
+
+    watch : {
+        counter(value) {
+            console.log("counter is changing" ,value);
+            this.runSomethingWhenCounterChange()
+            console.log('Local Var', this.localVar)
+        }
     }
+
 }
 </script>

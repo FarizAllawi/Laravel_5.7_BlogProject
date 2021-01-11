@@ -25,14 +25,17 @@ Route::any('{slug}', function(){
 Route::post('app/getTags','AdminController@getTags');
 Route::post('app/addTag','AdminController@addTag');
 Route::post('app/editTag','AdminController@editTag');
+Route::post('app/deleteTag','AdminController@deleteTag');
+
 
 // Category Routes
-Route::post('app/deleteTag','AdminController@deleteTag');
 Route::post('app/upload','AdminController@upload');
 Route::post('app/deleteUpload','AdminController@deleteUpload');
 Route::post('app/getCategory' , 'AdminController@getCategory');
 Route::post('app/addCategory' , 'AdminController@addCategory');
 Route::post('app/editCategory' , 'AdminController@editCategory');
+Route::post('app/deleteCategory' , 'AdminController@deleteCategory');
+
 
 
 

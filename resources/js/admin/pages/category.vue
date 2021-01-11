@@ -27,7 +27,7 @@
 									<td>
 										<Button type="info" size="small" @click="showEditModal(category , i)">Edit</Button>
 										<Button type="error" size="small" @click="showDeletingModal(category , i)" :loading="category.isDeleting">Delete</Button>
-									</td>
+									</td>  
 								</tr>
 						</table>
 					</div>
@@ -65,7 +65,7 @@
                         </div>
 
 						<div slot="footer">
-							<Button type="default" @click="addModal=false">Close</Button>
+							<Button type="default" @click="addModalClose">Close</Button>
 							<Button type="primary" @click="addCategory" :disabled="isAdding" >{{ isAdding ? 'Adding..' : 'Add Category' }}</Button>
 
 						</div>
@@ -111,26 +111,8 @@
 					</Modal>
 
 					<!-- tag delete modal -->
-					<Modal
-						v-model="showDeleteModal"
-						width  = "360"
-						title = 'Edit Tag'
-						:mask-closabl="false"
-						:closable="false"
-					>
-						<p slot="header" style="color:#f60; text-align:center">
-							<Icon type="ios-information-circle"></Icon>
-							<span>Delete Confirmation</span>
-						</p>
-						
-						<div style="text-align:center">
-							<p>Are you sure you want to delete tag ?</p>
-						</div>
-						<div slot="footer">
-							<Button type="error"  size="large" long :loading="isDeleting" :disabled="isDeleting" @click="deleteTag">Delete Tag</Button>
-						</div>
-					</Modal>
- 
+					<delete-modal></delete-modal>
+	
 				</div>
 
 			</div>
@@ -139,13 +121,14 @@
 </template>
 
 <script>
+import deleteModal from '../components/deleteModal.vue'
+import {mapGetters} from 'vuex'
 export default {
 	data() {
 		return {
 			data : {
                 categoryName : '',
                 iconImage    : '',
- 
 			},
 			addModal 		 :false,
 			editModal		 : false,
@@ -176,6 +159,7 @@ export default {
 				this.categoryList.unshift(res.data);
 				this.s('Category has been added Succesfully');
 				this.$refs.uploads.clearFiles();
+
 				this.addModal = false;
 				this.data.categoryName = '';
 				this.data.iconImage = '';
@@ -192,6 +176,17 @@ export default {
 					this.swr();
 				}
 			}
+		},
+
+		addModalClose() {
+			this.addModal = false
+			this.data.categoryName  = ''
+			if (this.data.iconImage) {
+				this.deleteImage()
+			}
+			this.data.iconImage  = ''
+			this.$refs.uploads.clearFiles()
+
 		},
 
 		async editCategory() {
@@ -231,24 +226,15 @@ export default {
 			this.isEditingItems = true;
 		},
 
-		async deleteTag(tag , index) {
-			this.isDeleting = true;
-			const res = await this.callApi('post' , 'app/deleteTag', this.deleteItem);
-
-			if (res.status===200) {
-				this.tags.splice(this.deletingIndex , 1);
-				this.s('Tag has been delleted succesfully !');
+		showDeletingModal(category , index) {
+			const deleteModalObj  = {
+				showDeleteModal : true,
+				deleteUrl       : 'app/deleteCategory',
+				data            : category,
+				deletingIndex	: index,
+				isDeleted       : false,
 			}
-			else 
-				this.swr()
-			this.isDeleting = false;
-			this.showDeleteModal = false;
-		},
-
-		showDeletingModal(tag , index) {
-			this.deleteItem      = tag;
-			this.deletingIndex	 = index;
-			this.showDeleteModal = true;
+			this.$store.commit('setDeletingModalObj', deleteModalObj)
         },
         
         handleView (name) {
@@ -321,7 +307,21 @@ export default {
 			this.categoryList = res.data
 		else 
 			this.swr()
-    },
+	},
+	
+	components : {
+		'delete-modal' : deleteModal,
+	},
+	computed : {
+		...mapGetters(['getDeleteModalObj'])
+	},
+	watch : {
+		getDeleteModalObj(obj) {
+			if (obj.isDeleted) {
+				this.categoryList.splice(obj.deletingIndex)
+			}
+		}
+	}
     
 }
 </script>

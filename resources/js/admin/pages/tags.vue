@@ -41,7 +41,7 @@
 						<Input v-model="data.tagName" placeholder="Add Tag Name"/>
 
 						<div slot="footer">
-							<Button type="default" @click="addModal=false">Close</Button>
+							<Button type="default" @click="addModalClose">Close</Button>
 							<Button type="primary" @click="addTag" :disabled="isAdding" >{{ isAdding ? 'Adding..' : 'Add Tag' }}</Button>
 
 						</div>
@@ -65,26 +65,7 @@
 					</Modal>
 
 					<!-- tag delete modal -->
-					<Modal
-						v-model="showDeleteModal"
-						width  = "360"
-						title = 'Edit Tag'
-						:mask-closabl="false"
-						:closable="false"
-					>
-						<p slot="header" style="color:#f60; text-align:center">
-							<Icon type="ios-information-circle"></Icon>
-							<span>Delete Confirmation</span>
-						</p>
-						
-						<div style="text-align:center">
-							<p>Are you sure you want to delete tag ?</p>
-						</div>
-						<div slot="footer">
-							<Button type="error"  size="large" long :loading="isDeleting" :disabled="isDeleting" @click="deleteTag">Delete Tag</Button>
-						</div>
-					</Modal>
-
+					<delete-modal></delete-modal>
 				</div>
 
 			</div>
@@ -93,6 +74,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+import deleteModal from '../components/deleteModal.vue';
 export default {
 	data() {
 		return {
@@ -137,6 +120,11 @@ export default {
 			}
 		},
 
+		addModalClose() {
+			this.addModal = false
+			this.data.tagName  = ''
+		},
+
 		async editTag() {
 			// if (this.data.tagName.trim() == '') return this.e('Tag name is required');
 			const res = await this.callApi('post', 'app/editTag' , this.editData);
@@ -167,24 +155,15 @@ export default {
 			this.index = index;
 		},
 
-		async deleteTag(tag , index) {
-			this.isDeleting = true;
-			const res = await this.callApi('post' , 'app/deleteTag', this.deleteItem);
-
-			if (res.status===200) {
-				this.tags.splice(this.deletingIndex , 1);
-				this.s('Tag has been delleted succesfully !');
-			}
-			else 
-				this.swr()
-			this.isDeleting = false;
-			this.showDeleteModal = false;
-		},
-
 		showDeletingModal(tag , index) {
-			this.deleteItem      = tag;
-			this.deletingIndex	 = index;
-			this.showDeleteModal = true;
+			const deleteModalObj  = {
+				showDeleteModal : true,
+				deleteUrl       : 'app/deleteTag',
+				data            : tag,
+				deletingIndex	: index,
+				isDeleted       : false,
+			}
+			this.$store.commit('setDeletingModalObj', deleteModalObj)
 		}
 	
 	},
@@ -197,5 +176,22 @@ export default {
 		else 
 			this.swr()
 	}
+	,
+	components : {
+		'delete-modal' : deleteModal,
+	},
+	computed : {
+		...mapGetters(['getDeleteModalObj'])
+	},
+	watch : {
+		getDeleteModalObj(obj) {
+			if (obj.isDeleted) {
+				this.tags.splice(obj.deletingIndex)
+			}
+		}
+	}
+
+	
+	
 }
 </script>
