@@ -36,7 +36,8 @@ Route::post('app/addCategory' , 'AdminController@addCategory');
 Route::post('app/editCategory' , 'AdminController@editCategory');
 Route::post('app/deleteCategory' , 'AdminController@deleteCategory');
 
-
+// Admin-users Routes
+Route::post('app/addUsers' , 'AdminController@addUsers');
 
 
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Tag;
 use App\Category;
+use App\User;
 
 class AdminController extends Controller
 {
@@ -110,6 +111,23 @@ class AdminController extends Controller
             return 'done';
         } 
         else return 0;
-    
     }
+
+    // Admin User Method
+    public function addUsers(Request $request) {
+        // Validate request
+        $this->validate($request, [
+            'fullName'     => 'required|',
+            'email'        => 'required|email',
+            'password'     => 'required|min:6',
+            'userType'     => 'required',
+        ]);
+        return $create = User::create([
+            'fullName' => $request->fullName,
+            'email'    => $request->email,
+            'password' => bcrypt($request->password),
+            'userType' => $request->userType
+        ]);
+    }
+
 }
