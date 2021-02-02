@@ -219,6 +219,7 @@ export default {
 				isDeleted       : false,
 			}
 			this.$store.commit('setDeletingModalObj', deleteModalObj)
+			this.deletingIndex = index
 		}
 	
 	},
@@ -240,7 +241,7 @@ export default {
 	watch : {
 		getDeleteModalObj(obj) {
 			if (obj.isDeleted) {
-				this.users.splice(obj.deletingIndex)
+				this.users.splice(this.deletingIndex , 1)
 			}
 		}
 	}

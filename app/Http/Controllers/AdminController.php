@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Tag;
 use App\Category;
 use App\User;
+use App\Role;
 
 class AdminController extends Controller
 {
@@ -70,6 +71,9 @@ class AdminController extends Controller
         }
     }
 
+    /**
+     * Tags Method
+     */
     public function getTags() {
         return Tag::orderBy('id', 'desc')->get(); 
     }
@@ -128,7 +132,9 @@ class AdminController extends Controller
         return file_exists($filePath) ? @unlink($filePath) : 0;
     }
 
-    // Category Method
+    /**
+     * Category Method
+     */
     public function getCategory() {
         return Category::orderBy('id', 'desc')->get(); 
     }
@@ -174,7 +180,9 @@ class AdminController extends Controller
     }
     
 
-    // Admin User Method
+    /**
+     * Admin User Method
+     */
     public function getUsers() {
         return User::where('userType', '!=' , 'User')->get(); 
     }
@@ -218,6 +226,40 @@ class AdminController extends Controller
             'id' => 'required|'
         ]);
         return User::where('id' , $request->id)->delete();
+    }
+
+    /**
+     * Role User Management 
+     */
+    public function getRoles(Request $request) {
+        return Role::orderBy('id', 'desc')->get(); 
+    }
+
+    public function addRoles(Request $request) {
+        $this->validate($request , [
+            'roleName' => 'required',
+        ]);
+        return Role::create([
+            'roleName' => $request->roleName,
+        ]);
+    }
+
+    public function editRole(Request $request) {
+        $this->validate($request , [
+            'roleName' => 'required',
+        ]);
+        $data = [
+            'roleName' => $request->roleName
+        ];
+        return Role::where('id' , $request->id)->update($data);
+    }
+
+    public function deleteRole(Request $request) {
+        // validate request
+        $this->validate($request , [
+            'id' => 'required|'
+        ]);
+        return Role::where('id' , $request->id)->delete();
     }
 
 }

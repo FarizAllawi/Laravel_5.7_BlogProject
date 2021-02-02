@@ -235,6 +235,7 @@ export default {
 				isDeleted       : false,
 			}
 			this.$store.commit('setDeletingModalObj', deleteModalObj)
+			this.deletingIndex = index
         },
         
         handleView (name) {
@@ -317,7 +318,7 @@ export default {
 	watch : {
 		getDeleteModalObj(obj) {
 			if (obj.isDeleted) {
-				this.categoryList.splice(obj.deletingIndex)
+				this.categoryList.splice(this.deletingIndex , 1)
 			}
 		}
 	}
