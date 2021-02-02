@@ -17,7 +17,11 @@
     </head>
     <body> 
         <div id="app">
-            <main_app></main_app>
+            @if (Auth::check())
+                <main_app :user="{{ Auth::user() }}"></main_app>
+            @else 
+                <main_app :user="false"></main_app>
+            @endif
         </div>
         <script src="{{ mix('/js/app.js') }}"></script>
     </body>

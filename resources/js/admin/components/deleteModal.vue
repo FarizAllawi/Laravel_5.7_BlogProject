@@ -16,7 +16,7 @@
             </div>
             <div slot="footer">
                 <Button type="default"  size="large"  @click="closeModal">Close</Button>
-                <Button type="error"  size="large"  :loading="isDeleting" :disabled="isDeleting" @click="deleteTag">Delete Tag</Button>
+                <Button type="error"  size="large"  :loading="isDeleting" :disabled="isDeleting" @click="deleteModal">Delete</Button>
             </div>
         </Modal>
     </div>
@@ -31,7 +31,7 @@ export default {
     },
 
     methods : {
-        async deleteTag() {
+        async deleteModal() {
             this.isDeleting = true
 			const res = await this.callApi('post' , this.getDeleteModalObj.deleteUrl , this.getDeleteModalObj.data);
 

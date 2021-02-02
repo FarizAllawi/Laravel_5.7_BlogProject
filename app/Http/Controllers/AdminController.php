@@ -3,12 +3,72 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Tag;
 use App\Category;
 use App\User;
 
 class AdminController extends Controller
 {
+    public function index(Request $request) {
+        // First Check if yoar login and admin user
+        if (!Auth::check() && $request->path() != 'login'){
+            return redirect('/login');
+        }
+
+        if (!Auth::check() && $request->path() == 'login'){   
+            return view('welcome');
+        }
+
+        // You already login... so check for if you are admin user
+        $user = Auth::user();
+        if ($user->userType == 'User') {
+            return redirect('/login');
+        }
+
+        if ($request->path() == 'login') {
+            return redirect('/');
+        }
+        return view('welcome');
+    }
+
+    public function logout() {
+        Auth::logout();
+        return redirect('/login');
+    }
+
+    public function adminLogin(Request $request) { 
+        $this->validate($request, [
+            'email' => 'bail|required|email',
+            'password' => 'bail|required|min:6'
+        ]);
+
+        $credential_data = [
+            'email' => $request->email,
+            'password' => $request->password 
+        ];
+
+        if (Auth::attempt($credential_data)) {
+            $user = Auth::user();
+
+            if ($user->userType == 'User') {
+                Auth::logout();
+                return response()->json([
+                    'msg' => 'Incorrect Login details'
+                ],401);
+            }
+
+            redirect('/');
+            return response()->json([ 
+                'msg' => 'You are logged in',
+                'user' => $user
+            ]);
+        } else {
+            return response()->json([
+                'msg' => 'Incorrect Login details'
+            ],401);
+        }
+    }
 
     public function getTags() {
         return Tag::orderBy('id', 'desc')->get(); 
@@ -112,14 +172,19 @@ class AdminController extends Controller
         } 
         else return 0;
     }
+    
 
     // Admin User Method
+    public function getUsers() {
+        return User::where('userType', '!=' , 'User')->get(); 
+    }
+
     public function addUsers(Request $request) {
         // Validate request
         $this->validate($request, [
             'fullName'     => 'required|',
-            'email'        => 'required|email',
-            'password'     => 'required|min:6',
+            'email'        => 'bail|required|email',
+            'password'     => 'bail|required|min:6',
             'userType'     => 'required',
         ]);
         return $create = User::create([
@@ -128,6 +193,31 @@ class AdminController extends Controller
             'password' => bcrypt($request->password),
             'userType' => $request->userType
         ]);
+    }
+
+    public function editUsers(Request $request) {
+        // Validate request
+        $this->validate($request, [
+            'fullName'     => 'required|',
+            'email'        => "bail|required|email|unique:users,email,$request->id",
+            'password'     => 'min:6',
+            'userType'     => 'required',
+        ]);
+        $data  = [
+            'fullName'     => $request->fullName,
+            'email'        => $request->email,
+            'userType'     => $request->userType,
+        ];
+        if ($request->password) $data['password'] = bcrypt($request->password);
+        return $update = User::where('id', $request->id)->update($data);
+    }
+
+    public function deleteUsers(Request $request) {
+        // validate request
+        $this->validate($request , [
+            'id' => 'required|'
+        ]);
+        return User::where('id' , $request->id)->delete();
     }
 
 }

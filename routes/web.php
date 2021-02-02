@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Middleware\AdminCheck;
+use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -11,33 +13,39 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::prefix('app')->middleware(AdminCheck::class)->group(function(){
+    // Admin Login 
+    Route::post('/adminLogin', 'AdminController@adminLogin');
+
+    // Tags Routes
+    Route::post('/getTags','AdminController@getTags');
+    Route::post('/addTag','AdminController@addTag');
+    Route::post('/editTag','AdminController@editTag');
+    Route::post('/deleteTag','AdminController@deleteTag');
+
+    // Category Routes
+    Route::post('/upload','AdminController@upload');
+    Route::post('/deleteUpload','AdminController@deleteUpload');
+    Route::post('/getCategory' , 'AdminController@getCategory');
+    Route::post('/addCategory' , 'AdminController@addCategory');
+    Route::post('/editCategory' , 'AdminController@editCategory');
+    Route::post('/deleteCategory' , 'AdminController@deleteCategory');
+
+    // Admin-users Routes
+    Route::post('/getUsers' , 'AdminController@getUsers');
+    Route::post('/addUsers' , 'AdminController@addUsers');
+    Route::post('/editUsers' , 'AdminController@editUsers');
+    Route::post('/deleteUsers' , 'AdminController@deleteUsers');
 });
 
-Route::get('/new', 'TestController@controllerMethod');
-Route::any('{slug}', function(){
-    return view('welcome');
-});
+Route::get('/logout', 'AdminController@logout');
+Route::get('/', 'AdminController@index');
+Route::any('/{slug}' , 'AdminController@index');
 
 
-// Tags Routes
-Route::post('app/getTags','AdminController@getTags');
-Route::post('app/addTag','AdminController@addTag');
-Route::post('app/editTag','AdminController@editTag');
-Route::post('app/deleteTag','AdminController@deleteTag');
 
 
-// Category Routes
-Route::post('app/upload','AdminController@upload');
-Route::post('app/deleteUpload','AdminController@deleteUpload');
-Route::post('app/getCategory' , 'AdminController@getCategory');
-Route::post('app/addCategory' , 'AdminController@addCategory');
-Route::post('app/editCategory' , 'AdminController@editCategory');
-Route::post('app/deleteCategory' , 'AdminController@deleteCategory');
 
-// Admin-users Routes
-Route::post('app/addUsers' , 'AdminController@addUsers');
 
 
 
